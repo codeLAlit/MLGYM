@@ -7,6 +7,7 @@ from .forms import MyUserForm, TrainingMethodForm
 from .algorithms import *
 from .Koustav_LR import *
 from .linreg_normal import *
+from linearsvm import *
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from .signals import *
@@ -66,6 +67,8 @@ def choose_method(request):
 				return redirect('csv_upload_logreg')
 			elif method[0]=="linreg_normal":
 				return redirect('csv_upload_linreg_normal')
+			elif method[0]=="linsvm":
+				return redirect('csv_upload_linsvm')
 	return render(request, 'mlgym1/choose_method.html', {'form':form})
 
 @login_required
@@ -290,3 +293,63 @@ def upload_csv_test_linreg_normal(request):
 	except:
 		result_available=False
 	return render(request, 'mlgym1/test_upload_linreg_normal.html', {'trained':trained, 'result':result_string, 'result_available':result_available})
+
+@login_required
+
+def upload_csv_train_linsvm(request):
+	if request.method == "GET":
+		return render(request, 'mlgym1/csv_upload_linsvm.html', {})
+
+	csv_file1=request.FILES['file1']
+	csv_file2=request.FILES['file2']
+	lr=str(request.POST.get('learning_rate'))
+	iters=str(request.POST.get('max_iterations'))
+	lr=float(lr)
+	iters=int(iters)
+	if not csv_file.name.endswith('.csv'):
+		return redirect("csv_upload_linsvm")
+
+	db_x=pd.read_csv(csv_file1)
+	db_y=pd.read_csv(csv_file2)
+	theta=linsvm_train(db_x,db_y,iters,lr)
+	theta_str=numpy_to_str(theta)
+	request.user.thetas.all().delete()
+	theta_model=ThetaString()
+	theta_model.name="theta_linsvm"
+	theta_model.theta_string=theta_str
+	theta_model.user=request.user
+	theta_model.save()
+	response= redirect('test_upload_linsvm')
+	return response
+
+
+@login_required
+
+def upload_csv_test_linsvm(request):
+	thetas=request.user.thetas.all()
+	trained=True
+	result_available=False
+	if len(thetas)==0:
+		trained=False
+	else:
+		#obtain theta in numpy form for further use
+		theta=thetas.filter(name="theta_linsvm")
+		if len(theta)==0 or len(theta)>1:
+			trained=False
+		else:
+			theta = str_to_numpy(theta[0].theta_string)
+
+	if request.method == "GET":
+		return render(request, 'mlgym1/test_upload_linsvm.html', {'trained':trained,'result_available':result_available})
+	if not trained:
+		return redirect('csv_upload_linsvm')
+	csv_file=request.FILES['filename']
+	if not csv_file.name.endswith('.csv'):
+		return redirect('test_upload_linsvm')
+	db=pd.read_csv(csv_file)
+	try:
+		result_string=numpy_to_str(linsvm_predict(db, theta))
+		result_available=True
+	except:
+		result_available=False
+	return render(request, 'mlgym1/test_upload_linsvm.html', {'trained':trained, 'result':result_string, 'result_available':result_available})
