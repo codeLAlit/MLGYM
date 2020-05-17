@@ -7,7 +7,7 @@ from .forms import MyUserForm, TrainingMethodForm
 from .algorithms import *
 from .Koustav_LR import *
 from .linreg_normal import *
-from linearsvm import *
+from .linearsvm import *
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from .signals import *
@@ -306,9 +306,10 @@ def upload_csv_train_linsvm(request):
 	iters=str(request.POST.get('max_iterations'))
 	lr=float(lr)
 	iters=int(iters)
-	if not csv_file.name.endswith('.csv'):
+	if not csv_file1.name.endswith('.csv'):
 		return redirect("csv_upload_linsvm")
-
+	if not csv_file2.name.endswith('.csv'):
+		return redirect("csv_upload_linsvm")
 	db_x=pd.read_csv(csv_file1)
 	db_y=pd.read_csv(csv_file2)
 	theta=linsvm_train(db_x,db_y,iters,lr)
