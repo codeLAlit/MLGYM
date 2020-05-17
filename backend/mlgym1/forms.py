@@ -13,7 +13,8 @@ training_methods=(
 	("nn4","4 Layer Neural Network"),
 	("0", "Don't train"),
 	("logreg","Logistic Regression"),
-	("linreg_normal","Linear Regression via Normal Equation")
+	("linreg_normal","Linear Regression via Normal Equation"),
+	("linsvm","LinearSVM")
 	)
 class TrainingMethodForm(forms.Form):
 	method_field=forms.MultipleChoiceField(choices=training_methods)
