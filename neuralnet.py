@@ -26,3 +26,13 @@ class NeuralNet(nn.Module):
 
         return x	
 
+
+def update(x,y,lr):
+    opt=optim.Adam(model.parameters(),lr,weight_decay=1e-5)
+    y_hat=model(x)
+    loss=loss_func(y_hat,y)
+    loss.backward()
+    opt.step()
+    opt.zero_grad()
+    return loss.item()
+    
