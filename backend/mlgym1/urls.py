@@ -17,5 +17,6 @@ urlpatterns=[
 	path('normallinreg/train', views.upload_csv_train_linreg_normal, name="csv_upload_linreg_normal"),
 	path('normallinreg/test', views.upload_csv_test_linreg_normal, name="test_upload_linreg_normal"),
 	path('linsvm/train',views.upload_csv_train_linsvm,name="csv_upload_linsvm"),
-	path('linsvm/test', views.upload_csv_test_linsvm, name="test_upload_linsvm")
+	path('linsvm/test', views.upload_csv_test_linsvm, name="test_upload_linsvm"),
+        path('knn/run', views.upload_csv_knn, name="csv_upload_knn")
 ]
