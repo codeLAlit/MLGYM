@@ -439,7 +439,7 @@ def upload_csv_test_rbf(request):
         else:
                 #obtain theta in numpy form for further use
                 theta=thetas.filter(name="theta_rbf")
-                if len(theta)==0 or len(theta)>1:
+                if len(theta)==0 :
                         trained=False
                 else:
                         theta = str_to_numpy(theta[0].theta_string)
