@@ -12,6 +12,7 @@ from .k_nearest_neighbours import *
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from .signals import *
+from .rbfkernel import *
 
 # Create your views here.
 def home(request):
@@ -72,6 +73,8 @@ def choose_method(request):
                                 return redirect('csv_upload_linsvm')
                         elif method[0]=="knn":
                                 return redirect('csv_upload_knn')
+                        elif method[0]=="rbf":
+                                return redirect('csv_upload_rbf')
         return render(request, 'mlgym1/choose_method.html', {'form':form})
 
 @login_required
@@ -391,4 +394,67 @@ def upload_csv_knn(request):
         
         return render(request, 'mlgym1/csv_upload_knn.html', {'trained':trained, 'result':result_string, 'result_available':result_available})
 
+@login_required
 
+def upload_csv_train_rbf(request):
+        if request.method == "GET":
+                return render(request, 'mlgym1/csv_upload_rbf.html', {})
+
+        csv_file1=request.FILES['file1']
+        csv_file2=request.FILES['file2']
+        lr=str(request.POST.get('learning_rate'))
+        iters=str(request.POST.get('max_iterations'))
+        sigma = str(request.POST.get('sigma'))
+        reg = str(request.POST.get('regularisation_constant'))
+        reg = float(reg)
+        reg = 1/reg
+        lr=float(lr)
+        sigma = float(sigma)
+        iters=int(iters)
+        if not csv_file1.name.endswith('.csv'):
+                return redirect("csv_upload_rbf")
+        if not csv_file2.name.endswith('.csv'):
+                return redirect("csv_upload_rbf")
+        X_train=np.array(pd.read_csv(csv_file1))
+        y_train=np.array(pd.read_csv(csv_file2))
+        theta=rbf_train(X_train,y_train,reg,lr,sigma,iters)
+        theta_str=numpy_to_str(theta)
+        request.user.thetas.all().delete()
+        theta_model=ThetaString()
+        theta_model.name="theta_rbf"
+        theta_model.theta_string=theta_str
+        theta_model.user=request.user
+        theta_model.save()
+        response= redirect('test_upload_rbf')
+        return response
+
+@login_required
+
+def upload_csv_test_rbf(request):
+        thetas=request.user.thetas.all()
+        trained=True
+        result_available=False
+        if len(thetas)==0:
+                trained=False
+        else:
+                #obtain theta in numpy form for further use
+                theta=thetas.filter(name="theta_rbf")
+                if len(theta)==0 or len(theta)>1:
+                        trained=False
+                else:
+                        theta = str_to_numpy(theta[0].theta_string)
+
+        if request.method == "GET":
+                return render(request, 'mlgym1/test_upload_rbf.html', {'trained':trained,'result_available':result_available})
+        if not trained:
+                return redirect('csv_upload_rbf')
+        csv_file=request.FILES['filename']
+        if not csv_file.name.endswith('.csv'):
+                return redirect('test_upload_rbf')
+        X_test=np.array(pd.read_csv(csv_file))
+        try:
+                result_string=numpy_to_str(rbf_predict(X_test, theta))
+                result_available=True
+        except:
+                result_available=False
+        return render(request, 'mlgym1/test_upload_rbf.html', {'trained':trained, 'result':result_string, 'result_available':result_available})
