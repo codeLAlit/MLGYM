@@ -7,6 +7,7 @@ from scipy.special import expit
 class parameters(object):
 	def __init__(self,sizes):
 		self.classes=sizes[-1]
+		self.sizes=sizes
 		self.weights=[np.random.randn(y,x) for x,y in zip(sizes[:-1],sizes[1:])]
 		self.biases=[np.random.randn(y,1) for y in sizes[1:]]
 
@@ -20,10 +21,11 @@ def gradient_descent(training_data,epochs,mini_batch_size,eta,lmbda,sizes):
 	n=len(training_data)
 	
 	for j in range(epochs):
+		print("Training Epoch: {}".format(j+1))
 		random.shuffle(training_data)
 		mini_batches=[training_data[k:k+mini_batch_size] for k in range(0,n,mini_batch_size)]
 		for mini_batch in mini_batches:
-			update(mini_batch,eta,lmbda,params)
+			update(mini_batch,eta,lmbda)
 		
 	thetas=[]
 	for w,b in zip(params.weights,params.biases):
@@ -51,8 +53,8 @@ def backprop(x,y):
 	global params
 	nabla_b=[np.zeros(b.shape) for b in params.biases]
 	nabla_w=[np.zeros(w.shape) for w in params.weights]
-	activation=x.transpose()
-	activations=[x.transpose()]
+	activation=x.reshape((x.size,1))
+	activations=[x.reshape((x.size,1))]
 	
 	for w,b in zip(params.weights,params.biases):
 		z=np.dot(w,activation)+b
@@ -61,12 +63,14 @@ def backprop(x,y):
 	
 	#note that we have assumed y is not vectorized
 	y=vectorize(y)
+	
 	#using cross entropy cost, therefore delta is not dependent on sigmoid_prime(z)
 	delta=activations[-1]-y 
 	nabla_b[-1]=delta
 	nabla_w[-1]=np.dot(delta,activations[-2].transpose())
+	
 
-	for l in range(1,params.num_layers-1):
+	for l in range(1,len(params.sizes)-1):
 		delta=np.dot(params.weights[-l].transpose(),delta)*(activations[-l-1])*(1-activations[-l-1])
 		nabla_b[-l-1]=delta
 		nabla_w[-l-1]=np.dot(delta,activations[-l-2].transpose())
