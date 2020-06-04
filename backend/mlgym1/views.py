@@ -13,6 +13,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from .signals import *
 from .rbfkernel import *
+from .Sumeet_NN import *
 
 # Create your views here.
 def home(request):
@@ -75,6 +76,8 @@ def choose_method(request):
                                 return redirect('csv_upload_knn')
                         elif method[0]=="rbf":
                                 return redirect('csv_upload_rbf')
+                        elif method[0]="NN":
+                                return redirect('csv_upload_NN')              
         return render(request, 'mlgym1/choose_method.html', {'form':form})
 
 @login_required
@@ -458,3 +461,90 @@ def upload_csv_test_rbf(request):
         except:
                 result_available=False
         return render(request, 'mlgym1/test_upload_rbf.html', {'trained':trained, 'result':result_string, 'result_available':result_available})
+
+@login_required
+
+def upload_csv_train_NN(request):
+        if request.method == "GET":
+                return render(request, 'mlgym1/csv_upload_NN.html', {})
+
+        csv_file1=request.FILES['file1']
+        lr=str(request.POST.get('learning_rate'))
+        iters=str(request.POST.get('max_iterations'))
+        reg = str(request.POST.get('reg_constant'))
+        mini_batch_size=str(request.POST.get('mini_batch_size'))
+        num_layers=str(request.POST.get('num_layers'))
+
+        #list of strings separated by commas
+        neurons=str(request.POST.get('neurons'))
+        neurons=neurons.split(',')
+        layers=list(map(int,neurons))
+
+        mini_batch_size=int(mini_batch_size)        
+        num_layers=int(num_layers)
+        reg = float(reg)
+        lr=float(lr)
+        iters=int(iters)
+       
+
+        if not csv_file1.name.endswith('.csv') or len(layers)!=num_layers:
+                return redirect("csv_upload_NN")
+        
+        X_er=np.array(pd.read_csv(csv_file1))
+        X_train=X_er[:,:-1]
+        y_train=X_er[:,-1:]
+        #theta is a n array of matrices
+        theta1=train_nn(X_train,y_train,reg,lr,iters,mini_batch_size,layers)
+       
+        request.user.thetas.all().delete()
+        theta_len=ThetaString()
+        theta_len.name="theta_NN_len"
+        theta_len.theta_string=str(len(theta1))
+        theta_len.user=request.user
+        theta_len.save()
+        for i in range(len(theta1)):
+                theta=ThetaString()
+                theta.name='theta_NN_'+str(i)
+                theta.theta_string=numpy_to_str(theta1[i])
+                theta.user=request.user
+                theta.save()
+        response= redirect('test_upload_NN')
+        return response
+
+
+@login_required
+def upload_csv_test_NN(request):
+        thetas=request.user.thetas.all()
+        theta_len_list=thetas.filter(name="theta_NN_len")
+        trained=True
+        result_available=False
+        l=0
+        theta_list=[]
+        if len(theta_len_list)==0 or len(theta_len_list)>1:
+                trained=False
+        else:
+                l=int(theta_len_list[0].theta_string)
+        for i in range(l):
+                try:
+                        theta_i_str=thetas.filter(name=('theta_NN_'+str(i)))[0]
+                        theta_list.append(str_to_numpy(theta_i_str.theta_string))
+                except:
+                        trained=False
+        if request.method=="GET":
+                
+                return render(request, 'mlgym1/test_upload_NN.html', {'trained':trained,'result_available':result_available})
+        if not trained:
+                return redirect('csv_upload_NN')
+        csv_file=request.FILES['filename']
+        if not csv_file.name.endswith('.csv'):
+                return redirect('test_upload_nn4')
+        db=pd.read_csv(csv_file)
+        try:
+                result=NN_predict(db,theta_list)
+                result_str=numpy_to_str(result)
+                result_available=True
+        except:
+                result_str=""
+                result_available=False
+        return render(request, 'mlgym1/test_upload_NN.html', {'trained':trained,'result_available':result_available,'result_string':result_str})
+
