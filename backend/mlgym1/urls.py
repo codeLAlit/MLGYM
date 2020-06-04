@@ -21,4 +21,6 @@ urlpatterns=[
     path('knn/run', views.upload_csv_knn, name="csv_upload_knn"),
 	path('rbf/train',views.upload_csv_train_rbf,name="csv_upload_rbf"),
 	path('rbf/test', views.upload_csv_test_rbf, name="test_upload_rbf")
+	path('NN/train',views.upload_csv_train_NN,name="csv_upload_NN")
+	path('NN/test',views.upload_csv_test_NN,name="test_upload_NN")
 ]
