@@ -12,6 +12,7 @@ from .k_nearest_neighbours import *
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from .signals import *
+#from .rbfkernel import *
 from .rbfkernel import *
 from .Sumeet_NN import *
 
@@ -86,11 +87,15 @@ def upload_csv_train_perceptron(request):
                 return render(request, 'mlgym1/csv_upload_perceptron.html', {})
 
         csv_file=request.FILES['filename']
+        lr=str(request.POST.get('learning_rate'))
+        iters=str(request.POST.get('max_iterations'))
+        lr=float(lr)
+        iters=int(iters)
         if not csv_file.name.endswith('.csv'):
                 return redirect("csv_upload_perceptron")
 
         db=pd.read_csv(csv_file)
-        theta_str=perceptron(db)
+        theta_str=perceptron(db,lr,iters)
         request.user.thetas.all().delete()
         theta_model=ThetaString()
         theta_model.name="theta_perceptron"
@@ -105,6 +110,7 @@ def upload_csv_test_perceptron(request):
         thetas=request.user.thetas.all()
         trained=True
         result_available=False
+        result={'tp':0,'fp':0,'fn':0,'tn':0,'f1':0,'acc':0}
         if len(thetas)==0:
                 trained=False
         else:
@@ -116,19 +122,23 @@ def upload_csv_test_perceptron(request):
                         theta = str_to_numpy(theta[0].theta_string)
 
         if request.method == "GET":
-                return render(request, 'mlgym1/test_upload_perceptron.html', {'trained':trained,'result_available':result_available})
+                return render(request, 'mlgym1/test_upload_perceptron.html', {'trained':trained,'result_available':result_available, 'result':result})
         if not trained:
                 return redirect('csv_upload_perceptron')
         csv_file=request.FILES['filename']
-        if not csv_file.name.endswith('.csv'):
+        csv_file_actual=request.FILES['actual_y']
+        if not csv_file.name.endswith('.csv') or not csv_file_actual.name.endswith('.csv'):
                 return redirect('test_upload_perceptron')
         db=pd.read_csv(csv_file)
+        db_y=pd.read_csv(csv_file_actual)
         try:
-                result_string=numpy_to_str(perceptron_predict(db, theta))
+                pred=(perceptron_predict(db, theta))
+                tp,fp,fn,tn,f1,acc=perceptron_accuracy(pred,db_y.to_numpy())
+                result={'tp':tp,'fp':fp,'fn':fn,'tn':tn,'f1':f1,'acc':acc}
                 result_available=True
         except:
                 result_available=False
-        return render(request, 'mlgym1/test_upload_perceptron.html', {'trained':trained, 'result':result_string, 'result_available':result_available})
+        return render(request, 'mlgym1/test_upload_perceptron.html', {'trained':trained, 'result':result, 'result_available':result_available})
 
 @login_required
 def upload_csv_train_nn4(request):
@@ -240,7 +250,7 @@ def upload_csv_test_logreg(request):
                 return render(request, 'mlgym1/test_upload_logreg.html',{'trained':trained,'result_available':result_available})
         csv_file=request.FILES['filename']
         if not csv_file.name.endswith('.csv'):
-                return redirect('test_upload_nn4')
+                return redirect('test_upload_logreg')
         db=pd.read_csv(csv_file)
         try:
                 params={"w":theta_w,"b" :theta_b}
@@ -397,8 +407,8 @@ def upload_csv_knn(request):
         
         return render(request, 'mlgym1/csv_upload_knn.html', {'trained':trained, 'result':result_string, 'result_available':result_available})
 
+"""
 @login_required
-
 def upload_csv_train_rbf(request):
         if request.method == "GET":
                 return render(request, 'mlgym1/csv_upload_rbf.html', {})
@@ -461,6 +471,8 @@ def upload_csv_test_rbf(request):
         except:
                 result_available=False
         return render(request, 'mlgym1/test_upload_rbf.html', {'trained':trained, 'result':result_string, 'result_available':result_available})
+"""
+
 
 @login_required
 
@@ -547,4 +559,5 @@ def upload_csv_test_NN(request):
                 result_str=""
                 result_available=False
         return render(request, 'mlgym1/test_upload_NN.html', {'trained':trained,'result_available':result_available,'result_string':result_str})
+
 
