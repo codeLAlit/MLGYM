@@ -12,7 +12,7 @@ def str_to_numpy(theta_string):
 
 #assuming db is preprocessed, m rows, n columns(n inclusive of bias)
 #last column of db contains result for training
-def perceptron(db):
+def perceptron(db,lr=0.1,iters=200):
     train_db=db.sample(frac=1, random_state=0)
     X_train=train_db.iloc[:,:-1]
     y_train=train_db.iloc[:,-1]
@@ -23,8 +23,8 @@ def perceptron(db):
     n=X_train_mat.shape[1]
     #initializations
     theta=2*(np.matlib.rand(n,1)-0.5)
-    r=0.1 #vary and check
-    max_iterations=100
+    r=lr
+    max_iterations=iters
     convergence_flag=True
     
     for j in range(max_iterations):
@@ -64,6 +64,29 @@ def perceptron_predict(db, theta):
         else:
             pred[i,0]=0
     return pred
+
+#both numpy
+def perceptron_accuracy(pred,actual):
+    true_pos=0
+    true_neg=0
+    false_pos=0
+    false_neg=0
+    for i in range(pred.shape[0]):
+        if pred[i,0]==actual[i,0]:
+            if pred[i,0]==1:
+                true_pos+=1
+            else:
+                true_neg+=1
+        else:
+            if pred[i,0]==1:
+                false_pos+=1
+            else:
+                false_neg+=1
+    prec=true_pos/(true_pos+false_pos)
+    rec=true_pos/(true_pos+false_neg)
+    f1=2*prec*rec/(prec+rec)
+    acc=(true_pos+true_neg)/(pred.shape[0])
+    return true_pos,false_pos,false_neg,true_neg,f1,acc
    
 def sigmoid(x):
     return 1/(1+np.exp(-x))

@@ -15,7 +15,8 @@ training_methods=(
 	("logreg","Logistic Regression"),
 	("linreg_normal","Linear Regression via Normal Equation"),
 	("linsvm","LinearSVM"),
-        ("knn", "K Nearest Neighbors")
+    ("knn", "K Nearest Neighbors"),
+    ("rbf", "Gaussian SVM")
 	)
 class TrainingMethodForm(forms.Form):
 	method_field=forms.MultipleChoiceField(choices=training_methods)
