@@ -77,7 +77,7 @@ def choose_method(request):
                                 return redirect('csv_upload_knn')
                         elif method[0]=="rbf":
                                 return redirect('csv_upload_rbf')
-                        elif method[0]="NN":
+                        elif method[0]=="NN":
                                 return redirect('csv_upload_NN')              
         return render(request, 'mlgym1/choose_method.html', {'form':form})
 
@@ -407,7 +407,7 @@ def upload_csv_knn(request):
         
         return render(request, 'mlgym1/csv_upload_knn.html', {'trained':trained, 'result':result_string, 'result_available':result_available})
 
-"""
+
 @login_required
 def upload_csv_train_rbf(request):
         if request.method == "GET":
@@ -471,7 +471,7 @@ def upload_csv_test_rbf(request):
         except:
                 result_available=False
         return render(request, 'mlgym1/test_upload_rbf.html', {'trained':trained, 'result':result_string, 'result_available':result_available})
-"""
+
 
 
 @login_required
@@ -543,13 +543,14 @@ def upload_csv_test_NN(request):
                 except:
                         trained=False
         if request.method=="GET":
-                
+                print("request method get")
                 return render(request, 'mlgym1/test_upload_NN.html', {'trained':trained,'result_available':result_available})
         if not trained:
+                print("not trained")
                 return redirect('csv_upload_NN')
         csv_file=request.FILES['filename']
         if not csv_file.name.endswith('.csv'):
-                return redirect('test_upload_nn4')
+                return redirect('test_upload_NN')
         db=pd.read_csv(csv_file)
         try:
                 result=NN_predict(db,theta_list)
