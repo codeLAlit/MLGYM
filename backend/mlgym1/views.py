@@ -13,8 +13,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from .signals import *
 #from .rbfkernel import *
-from .rbfkernel import *
 from .Sumeet_NN import *
+from .Akash_Linreg import *
 
 # Create your views here.
 def home(request):
@@ -78,7 +78,9 @@ def choose_method(request):
                         elif method[0]=="rbf":
                                 return redirect('csv_upload_rbf')
                         elif method[0]=="NN":
-                                return redirect('csv_upload_NN')              
+                                return redirect('csv_upload_NN') 
+                        elif method[0]=="linreg":
+                                return redirect('csv_upload_linreg')
         return render(request, 'mlgym1/choose_method.html', {'form':form})
 
 @login_required
@@ -561,4 +563,58 @@ def upload_csv_test_NN(request):
                 result_available=False
         return render(request, 'mlgym1/test_upload_NN.html', {'trained':trained,'result_available':result_available,'result_string':result_str})
 
+@login_required
+def upload_csv_train_linreg(request):
+        if request.method == "GET":
+                return render(request, 'mlgym1/csv_upload_linreg.html', {})
 
+        csv_file1=request.FILES['file1']
+        csv_file2=request.FILES['file2']
+        lr=str(request.POST.get('learning_rate'))
+        iters=str(request.POST.get('max_iterations'))
+        reg=str(request.POST.get('lambda'))
+        error=str(request.POST.get('error'))
+        lr=float(lr)
+        iters=int(iters)
+        reg=float(reg)
+        error=float(error)
+        if not csv_file1.name.endswith('.csv') or not csv_file1.name.endswith('.csv') :
+                return redirect("csv_upload_linreg")
+
+        db_x=pd.read_csv(csv_file1)
+        db_y=pd.read_csv(csv_file2)
+        x=db_x.to_numpy()
+        y=db_y.to_numpy()
+        params=linearreg(x, y, reg, lr, iters, error)
+        request.user.thetas.all().delete()
+        theta=ThetaString()
+        theta.name="theta_linreg"
+        theta.theta_string=numpy_to_str(params)
+        theta.user=request.user
+        theta.save()
+        return redirect('test_upload_linreg')
+
+@login_required
+def upload_csv_test_linreg(request):
+        thetas=request.user.thetas.all()
+        trained=True
+        result_available=False
+        theta=thetas.filter(name="theta_linreg")
+        if len(theta)==0:
+                trained=False
+        else:
+                theta=str_to_numpy(theta[0].theta_string)
+        if request.method =="GET":
+                return render(request, 'mlgym1/test_upload_linreg.html',{'trained':trained,'result_available':result_available})
+        csv_file=request.FILES['filename']
+        if not csv_file.name.endswith('.csv'):
+                return redirect('test_upload_linreg')
+        db=pd.read_csv(csv_file)
+        try:
+                result=linreg_predict(db.to_numpy(),theta)
+                result_str=numpy_to_str(result)
+                result_available=True
+        except:
+                result_str=""
+                result_available=False
+        return render(request, 'mlgym1/test_upload_linreg.html', {'trained':trained,'result_available':result_available,'result_string':result_str})
