@@ -55,7 +55,7 @@ def linearreg(x,y,lamb=0,alpha=0.01,maxiter=1000,max_error=10**-4):
     theta_final=grad_des(x,y,ini_theta,lamb,alpha,maxiter,max_error)
     return theta_final
 
-def predict(x, theta):
+def linreg_predict(x, theta):
     m=x.shape[0]
     x2=x.copy()    
     one=np.ones((m,1),dtype=int)

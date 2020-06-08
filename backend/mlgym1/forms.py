@@ -10,14 +10,15 @@ class MyUserForm(forms.ModelForm):
 
 training_methods=(
 	("ptron","Perceptron"),
-	("nn4","4 Layer Neural Network"),
+	#("nn4","4 Layer Neural Network"),
 	("0", "Don't train"),
 	("logreg","Logistic Regression"),
 	("linreg_normal","Linear Regression via Normal Equation"),
 	("linsvm","LinearSVM"),
     ("knn", "K Nearest Neighbors"),
     ("rbf", "Gaussian SVM"),
-    ("NN","Neural Network(general)")
+    ("NN","Neural Network"),
+    ("linreg", "Linear Regression via Gradient Descent")
 	)
 class TrainingMethodForm(forms.Form):
 	method_field=forms.MultipleChoiceField(choices=training_methods)
