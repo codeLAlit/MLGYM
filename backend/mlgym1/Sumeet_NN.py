@@ -90,10 +90,12 @@ def train_nn(Xtrain,ytrain,reg,lr,iters,mini_batch_size,layers):
 
 def NN_predict(db,theta,y_val=None):
 	X_test=np.array(db)
-	X_test=np.concatenate(np.ones((X_test.shape[0],1)),axis=1)
+	X_test=np.concatenate((np.ones((X_test.shape[0],1)),X_test),axis=1)
 	activation=X_test
 	for w in theta:
+		print(activation.shape)
 		activation=expit(np.dot(activation,w.transpose()))
+		activation=np.concatenate((np.ones((activation.shape[0],1)),activation),axis=1)
 
 	predictions=np.argmax(activation,axis=1)
 	if y_val is not None:
