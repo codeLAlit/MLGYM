@@ -101,6 +101,21 @@ h1, h2, h3, h4 {
     color:#828282;
 }
 
+#sign{
+    margin-right: 50px;
+    float:right;
+    font-size: 20pt;
+}
+
+#sign a{
+    text-decoration: none;
+    color:#000;
+
+}
+#sign a:hover{
+    color:#828282;
+}
+
 #tabs{
     position: absolute;
     margin-left: 40%;

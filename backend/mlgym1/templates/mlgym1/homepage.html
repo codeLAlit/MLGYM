@@ -16,7 +16,11 @@
 			</ul>
 		</div>
 		<div id="start">
+			{% if user.is_authenticated%} 
 			<a href="{% url 'method_choice' %}" >Get Started</a>
+			{% else %}
+			<a href="{% url 'login' %}" >Get Started</a>
+			{% endif %}
 		</div>
 	</div>
 {% endblock %}

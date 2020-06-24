@@ -11,12 +11,16 @@
         <div id="logo"><a href="/">ML Gym</a></h1></div>
         {% if user.is_authenticated%}            
             <div id="user"><i class="glyphicon glyphicon-user"></i>{{ user.username }} <small><i class="glyphicon glyphicon-off"></i><a href="{% url 'logout' %}">Log out</a></small></div>
+            <div id="tabs">
+                <a href="{% url 'method_choice' %}" >Choose Method</a>
+            </div>
         {%else%}
             <div id="sign"><a href="{% url 'login' %}" >SignUp/SignIn</a></div>
+            <div id="tabs">
+                <a href="{% url 'login' %}" >Choose Method</a>
+            </div>
         {%endif%}
-        <div id="tabs">
-            <a href="{% url 'method_choice' %}" >Choose Method</a>
-        </div>
+        
     </div>
     <!-- glyphicon -->
     <div class="container"  id="content">
