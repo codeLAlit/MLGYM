@@ -2,13 +2,16 @@
 {% block content %}
 {% if trained %}
 	{% if not result_available %}
+		{% load static %}
+		<h2>Cost Plot</h2>
+		<img src="{% static 'assets/linreg.png' %}" alt="My image">
 		<h2>Upload CSV File for testing</h2>
 		<form action="{% url 'test_upload_linreg' %}" method="POST" enctype="multipart/form-data">
 			{%csrf_token%}
 			<input type = "file" name = 'filename' required="True"/>
 			<input type="submit" value="Upload"/>
 		</form>
-		<h2><small>ensure that it is in the same format as the training data and does not have a result column</small></h2>
+		<h2><small>Ensure that it is in the same format as the training data and does not have a result column</small></h2>
 	{% else %}
 		<h2>Predictions: {{result_string}}</h2>
 	{% endif %}

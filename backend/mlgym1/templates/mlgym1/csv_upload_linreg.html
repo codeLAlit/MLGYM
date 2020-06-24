@@ -1,7 +1,7 @@
 {% extends 'mlgym1/base.html'%}
 {% block content %}
-<h2>Upload CSV File for training linear regression model</h2>
-<form action="{% url 'csv_upload_linreg' %}" method="POST" enctype="multipart/form-data">
+<h2 id="heading">Upload CSV File for training linear regression model</h2>
+<form action="{% url 'csv_upload_linreg' %}" method="POST" enctype="multipart/form-data" >
 	{%csrf_token%}
 	<label for="file1">X - Features (without bias)</label>
 	<input type = "file" id="file1" name = 'file1' required="True"/>
@@ -24,7 +24,8 @@
 	<label for="error">Target Error</label>
 	<input type="number" name='error' id="error" placeholder="0.000001" step="0.000001" min="0.000001" max="100" required="True">
 	<br>
-	<input type="submit" value="Upload"/>
+	<input type="submit" value="Upload" id="upload"/>
 </form>
-<h2><small>Training might take a while</small></h2>
+<br>
+<h4 id="warn">Training might take a while</h4>
 {% endblock %}

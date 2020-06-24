@@ -16,7 +16,7 @@ from .signals import *
 #from .rbfkernel import *
 from .Sumeet_NN import *
 from .Akash_Linreg import *
-
+# from .rbfkernel import rbf_predict
 # Create your views here.
 
 
@@ -299,7 +299,7 @@ def upload_csv_train_linreg_normal(request):
     response = redirect('test_upload_linreg_normal')
     return response
 
-
+ 
 @login_required
 def upload_csv_test_linreg_normal(request):
     thetas = request.user.thetas.all()
