@@ -271,8 +271,9 @@ def upload_csv_test_logreg(request):
         params = {"w": theta_w, "b": theta_b}
         result = logreg_predict(db, params)
         result_str = numpy_to_str(result)
+        result_str = result_str.split("\n")
         result_available = True
-    except:
+    except :
         result_str = ""
         result_available = False
     return render(request, 'mlgym1/test_upload_logreg.html', {'trained': trained, 'result_available': result_available, 'result_string': result_str})
@@ -626,8 +627,10 @@ def upload_csv_test_linreg(request):
     try:
         result = linreg_predict(db.to_numpy(), theta)
         result_str = numpy_to_str(result)
+        result_str=result_str.split("\n")
         result_available = True
     except:
         result_str = ""
         result_available = False
     return render(request, 'mlgym1/test_upload_linreg.html', {'trained': trained, 'result_available': result_available, 'result_string': result_str})
+

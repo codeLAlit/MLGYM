@@ -1,5 +1,5 @@
 import numpy as np
-
+import matplotlib.pyplot as plt
 # X is assumed to be dataframe(m,n)
 # m,n is the usual notation
 # Y is assumed to be dataframe(m,1)
@@ -23,24 +23,54 @@ def propagate(w,b,X,Y):
 	grad = {"dw": dw,"db": db}
 	return grad,cost
 
-def optimize(w,b,X,Y,num_iter,learning_rate):
+def cost_forward(w, b, X, Y):
+	m = X.shape[0]
+	Z = np.dot(X,w) + b
+	A = sigmoid(Z)
+	cost = np.sum(Y*np.log(A) + (1-Y)*np.log(1-A))*(-1)/m
+	return cost
+
+def optimize(w,b,Train,Test,num_iter,learning_rate):
+	X=Train[0]
+	Y=Train[1]
+	X_test=Test[0]
+	Y_test=Test[1]
 	dw = np.zeros((X.shape[1],1))
 	db = 0
 	cost = 0
+	train_hist=[]
+	test_hist=[]
 	for i in range(num_iter):
 		grad, cost = propagate(w,b,X,Y)
+		train_hist.append(cost)
+		test_c=cost_forward(w, b, X_test, Y_test)
+		test_hist.append(test_c)
 		dw = grad["dw"]
 		db = grad["db"]
 		w = w - learning_rate*dw
 		b = b - learning_rate*db
 	params = {"w": w, "b": b}
-	return params
+	return params, train_hist, test_hist
 
-def logreg_train(X_train, Y_train, num_iter=2000, learning_rate=0.01):
-	X_train = X_train.to_numpy()
-	Y_train = Y_train.to_numpy().reshape((X_train.shape[0],1))
+def logreg_train(X, Y, num_iter=2000, learning_rate=0.01):
+	m, n=X.shape
+	X = X.to_numpy()
+	Y = Y.to_numpy().reshape((X.shape[0],1))
+	Dataset=np.hstack((X, Y))
+	np.random.shuffle(Dataset)
+	X, Y=Dataset[:, 0:n], Dataset[:, n:]
+	train_end=int(X.shape[0]*0.8)
+	X_train, Y_train= X[0:train_end, :], Y[0:train_end, :]
+	X_test, Y_test= X[train_end:, :], Y[train_end:, :]
+	Train=X_train, Y_train.reshape(X_train.shape[0], 1)
+	Test=X_test, Y_test.reshape(X_test.shape[0], 1)
 	w,b = initialize(X_train.shape[1])
-	params = optimize(w,b,X_train,Y_train,num_iter,learning_rate)
+	params, train_hist, test_hist = optimize(w,b,Train,Test,num_iter,learning_rate)
+	plt.figure()
+	plt.plot(train_hist, linestyle='solid', color='red', label='Training Cost')
+	plt.plot(test_hist, linestyle='dashed', color='blue', label='Testing Cost')
+	plt.legend()
+	plt.savefig("mlgym1/static/assets/logreg.png")
 	return params
 	
 def logreg_predict(X_test, params):

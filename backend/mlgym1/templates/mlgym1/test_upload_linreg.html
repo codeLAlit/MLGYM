@@ -18,7 +18,9 @@
 		<h2>Cost Plot:</h2>
 		<img src="{% static 'assets/linreg.png' %}" alt="My image">
 		<h2>Predictions:</h2> <br> 
-		<p>{{result_string}}</p>
+		<div id="pred">
+		<p >{% for ent in result_string %}{{ent}}<br>{% endfor %}</p>
+		</div>
 	{% endif %}
 {% else %}
 	<h2>Training data unavailable. You can train an algorithm <a href="{% url 'csv_upload_linreg' %}">here</a></h2>
