@@ -9,11 +9,16 @@
 		<form action="{% url 'test_upload_linreg' %}" method="POST" enctype="multipart/form-data">
 			{%csrf_token%}
 			<input type = "file" name = 'filename' required="True"/>
-			<input type="submit" value="Upload"/>
+			<input type="submit" value="Upload" style="width:auto; float:left;"/>
 		</form>
+		<br>
 		<h2><small>Ensure that it is in the same format as the training data and does not have a result column</small></h2>
 	{% else %}
-		<h2>Predictions: {{result_string}}</h2>
+		{% load static %}
+		<h2>Cost Plot:</h2>
+		<img src="{% static 'assets/linreg.png' %}" alt="My image">
+		<h2>Predictions:</h2> <br> 
+		<p>{{result_string}}</p>
 	{% endif %}
 {% else %}
 	<h2>Training data unavailable. You can train an algorithm <a href="{% url 'csv_upload_linreg' %}">here</a></h2>
