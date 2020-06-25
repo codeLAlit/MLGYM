@@ -8,7 +8,7 @@
 			<input type = "file" name = 'filename' required="True"/>
 			<input type="submit" value="Upload"/>
 		</form>
-		<h2><small>ensure that it is in the same format as the training data and does not have a result column</small></h2>
+		<h2><small>ensure that it is in the same format as the training data and has a result column at the beginning</small></h2>
 	{% else %}
 		<h2>{{result_string}}</h2>
 	{% endif %}

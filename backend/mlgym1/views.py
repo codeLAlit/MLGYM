@@ -273,7 +273,7 @@ def upload_csv_test_logreg(request):
         result_str = numpy_to_str(result)
         result_str = result_str.split("\n")
         result_available = True
-    except :
+    except:
         result_str = ""
         result_available = False
     return render(request, 'mlgym1/test_upload_logreg.html', {'trained': trained, 'result_available': result_available, 'result_string': result_str})
@@ -300,7 +300,7 @@ def upload_csv_train_linreg_normal(request):
     response = redirect('test_upload_linreg_normal')
     return response
 
- 
+
 @login_required
 def upload_csv_test_linreg_normal(request):
     thetas = request.user.thetas.all()
@@ -566,9 +566,11 @@ def upload_csv_test_NN(request):
     if not csv_file.name.endswith('.csv'):
         return redirect('test_upload_NN')
     db = pd.read_csv(csv_file)
+    x_db = db.iloc[:, 1:]
+    y_db = db.iloc[:, 0]
     try:
-        result = NN_predict(db, theta_list)
-        result_str = numpy_to_str(result)
+        result = NN_predict(x_db, theta_list, y_db)
+        result_str = str(result) + " % accuracy"
         result_available = True
     except:
         result_str = ""
@@ -627,10 +629,9 @@ def upload_csv_test_linreg(request):
     try:
         result = linreg_predict(db.to_numpy(), theta)
         result_str = numpy_to_str(result)
-        result_str=result_str.split("\n")
+        result_str = result_str.split("\n")
         result_available = True
     except:
         result_str = ""
         result_available = False
     return render(request, 'mlgym1/test_upload_linreg.html', {'trained': trained, 'result_available': result_available, 'result_string': result_str})
-
