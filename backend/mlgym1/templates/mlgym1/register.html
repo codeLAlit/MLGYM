@@ -4,9 +4,10 @@
    
     <form method="post" action="{% url 'register' %}">
     {% csrf_token %}
-        <h2>Enter Details Here</h2>
+        <h2 style="font-family: 'Courier New', Courier, monospace;">Enter Details Here</h2>
         {{user_form.as_p}}
-        <input calss="button" type="submit" value="Sign Up" />
-        <h3>Already have an account? Login <a href="{%url 'login'%}">here</a></h3>
+        <input calss="button" type="submit" value="Sign Up" style="float:left; width:auto;"/>
+        <br>
+        <h3 style="font-family: 'Courier New', Courier, monospace;">Already have an account? Login <a href="{%url 'login'%}">here</a></h3>
     </form>
 {% endblock %}

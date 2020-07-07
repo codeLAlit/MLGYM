@@ -1,6 +1,6 @@
 {% extends 'mlgym1/base.html'%}
 {% block content %}
-<h2>Upload CSV File for training gaussian svm model</h2>
+<h2 id="heading">Upload CSV File for training gaussian svm model</h2>
 <form action="{% url 'csv_upload_rbf' %}" method="POST" enctype="multipart/form-data">
 	{%csrf_token%}
 	<label for="file1">X - Features</label>
@@ -16,7 +16,8 @@
 	<label for="max_iterations">Number of Iterations</label>
 	<input type="number" name='max_iterations' id="max_iterations" placeholder="1000" step="100" min="200" max="100000" required="True">
 	<br>
-	<input type="submit" value="Upload"/>
-</form>	
-<h2><small>Training might take a while</small></h2>
+	<input type="submit" value="Upload" id="upload"/>
+</form>
+<br>	
+<h4 id="warn">Training might take a while</h4>
 {% endblock %}

@@ -1,4 +1,26 @@
 {% extends 'mlgym1/base.html' %}
-{% block content %}
-	<h1>Yoooo</h1>
+{% block content %}	
+	<div class="col align-self-center" id="homepage">
+		<div id="intro">
+			This is an Open Source project aiming to provide a user algorithm interaction. Many ML apis do not give us much control over
+			the parameter of the algorithm, we provide a platform were a user can see how an algorithm is behaving and can tweak its parameter
+			to see result change in real time. As Andrew Ng says "without worring about the math" we provide ML algorithms to everyone to play
+			with them. This still require heavy development, we forward to your contribution.<br>
+			<b>How to use:</b>
+			<ul>
+				<li>Choose an algorithm to train.</li>
+				<li>Uploat data points and target variable separately.</li>
+				<li>Provide algorithm parameters.</li>
+				<li>Upload the data wait for training to get finished.</li>
+				<li>See the cost history and get the prediction by uploading new data.</li>
+			</ul>
+		</div>
+		<div id="start">
+			{% if user.is_authenticated%} 
+			<a href="{% url 'method_choice' %}" >Get Started</a>
+			{% else %}
+			<a href="{% url 'login' %}" >Get Started</a>
+			{% endif %}
+		</div>
+	</div>
 {% endblock %}

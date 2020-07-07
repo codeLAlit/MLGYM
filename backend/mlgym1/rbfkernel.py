@@ -21,7 +21,7 @@ def rbf(X, X_train, sigma=0.3):
 
 
 def rbf_train(X_train, y_train, reg, L_rate, sigma=0.3, iters=500):
-    global X_train
+    #global X_train
     X_train = torch.from_numpy(X_train)
     m, n = list(X_train.shape)
     y_train = torch.from_numpy(y_train)

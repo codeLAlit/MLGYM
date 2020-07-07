@@ -1,7 +1,15 @@
+body{
+    font-family: 'Courier New', Courier, monospace;
+}
 .page-header {
     background-color: #33ABF9;
     margin-top: 0;
-    padding: 20px 20px 20px 40px;
+    padding:1em;
+    position: absolute;
+    width:100%;
+    height: 7%;
+    border: 2px solid #000;
+
 }
 
 .page-header h1, .page-header h1 a, .page-header h1 a:visited, .page-header h1 a:active {
@@ -19,8 +27,10 @@ input[type=submit]{
     float:right;
 }
 
-.content {
+#content {
+    position: absolute;
     margin-left: 40px;
+    margin-top: 8%;
 }
 
 h1, h2, h3, h4 {
@@ -52,4 +62,154 @@ h1, h2, h3, h4 {
 
 .post h2 a, .post h2 a:visited {
     color: #000000;
+}
+
+.get-started{
+    box-sizing: border-box;
+    border: 1px solid #000000;
+    font-size: 26pt;
+}
+
+#logo{
+    position: absolute;
+    margin-left: 2%;
+    color:#000;
+    box-sizing: border-box;
+    font-size: 20pt;
+    font-family: 'Courier New', Courier, monospace;
+    padding-right: 20px;
+    border-right: 4px solid #000;
+}
+
+#logo a{
+    color: #000000;
+    text-decoration: none;
+}
+
+#user{
+    margin-right: 50px;
+    float:right;
+    font-size: 20pt;
+}
+
+#user a{
+    text-decoration: none;
+    color:#000;
+
+}
+#user a:hover{
+    color:#828282;
+}
+
+#sign{
+    margin-right: 50px;
+    float:right;
+    font-size: 20pt;
+}
+
+#sign a{
+    text-decoration: none;
+    color:#000;
+
+}
+#sign a:hover{
+    color:#828282;
+}
+
+#tabs{
+    position: absolute;
+    margin-left: 40%;
+    margin-top:1%;
+    box-sizing: border-box;
+    border:2px solid #000;
+    font-size: 20pt;
+    padding:5px;
+    border-radius: 10px;
+    background-color: rgb(216, 216, 216);
+    font-family: 'Courier New', Courier, monospace;
+}
+#tabs a{
+    color: #000000;
+    text-decoration: none;
+}
+
+#tabs:hover{
+    background-color: rgb(170, 248, 118);
+}
+
+#homepage{
+    width: 60%;
+    margin-left:20%;
+    height:60%;
+    border:1px solid #000;
+    font-family: 'Courier New', Courier, monospace;
+    padding-left:20px;
+    padding-right: 20px;
+    padding-top: 20px;
+}
+
+#intro{
+    overflow-y: scroll;
+    height: 200px;
+}
+#start{
+    text-align: center;
+    padding:20px;
+    font-size: 20pt;
+    background: transparent;
+}
+
+#start a{
+    text-decoration: none;
+    color: #000;
+    border: 2px solid #000;
+    padding:5px;
+}
+
+#start a:hover{
+    background: #33ABF9;
+    color:#fff;
+}
+
+#learning_rate{
+    width: auto;
+}
+
+#max_iterations{
+    width:auto;
+}
+
+#lambda{
+    width: auto;
+}
+
+#error{
+    width:auto;
+}
+
+#upload{
+    width:auto;
+    float:left;
+}
+
+#heading{
+    font-family: 'Courier New', Courier, monospace;
+    margin-bottom: 2em;
+}
+
+#warn{
+    margin-top: 2em;
+    color:#ff0707;
+    font-family: 'Courier New', Courier, monospace;
+}
+h2{
+    font-family: 'Courier New', Courier, monospace;
+}
+
+#pred{
+    margin-left: 30%;
+    height: 400px;
+    overflow-y: scroll;
+    width:20%;
+    margin-bottom: 20%;
 }

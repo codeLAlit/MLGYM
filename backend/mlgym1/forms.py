@@ -3,19 +3,22 @@ from django.contrib.auth.models import User
 from .models import MyUser
 
 class MyUserForm(forms.ModelForm):
-	password = forms.CharField(widget=forms.PasswordInput)
+	password = forms.CharField(widget=forms.PasswordInput)	
 	class Meta:
 		model=User
 		fields={'username','password'}
 
 training_methods=(
 	("ptron","Perceptron"),
-	("nn4","4 Layer Neural Network"),
+	#("nn4","4 Layer Neural Network"),
 	("0", "Don't train"),
 	("logreg","Logistic Regression"),
 	("linreg_normal","Linear Regression via Normal Equation"),
 	("linsvm","LinearSVM"),
-        ("knn", "K Nearest Neighbors")
+    ("knn", "K Nearest Neighbors"),
+    ("rbf", "Gaussian SVM"),
+    ("NN","Neural Network"),
+    ("linreg", "Linear Regression via Gradient Descent")
 	)
 class TrainingMethodForm(forms.Form):
 	method_field=forms.MultipleChoiceField(choices=training_methods)
